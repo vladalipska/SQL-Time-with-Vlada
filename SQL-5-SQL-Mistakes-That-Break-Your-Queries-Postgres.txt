@@ -1,0 +1,221 @@
+1. COUNT(*)
+
+-- Reset
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Create table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT
+);
+
+-- Insert data
+-- Some users signed up with OAuth (no email stored yet)
+INSERT INTO users (name, email) VALUES
+('Alice', 'alice@example.com'),
+('Bob', 'bob@example.com'),
+('Charlie', NULL),        -- OAuth signup
+('Diana', 'diana@example.com'),
+('Eve', NULL);            -- OAuth signup
+
+-- Show all users
+SELECT * FROM users;
+
+-- Demonstrate the issue
+SELECT 
+    COUNT(*)      AS total_users,
+    COUNT(email)  AS users_with_email
+FROM users;
+
+2. NOT IN + NULL
+
+
+-- Reset
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+
+-- Users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+-- Orders table
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id)
+);
+
+-- Insert users
+INSERT INTO users (name) VALUES
+('Alice'),
+('Bob'),
+('Charlie');
+
+-- Insert orders
+-- Bob made a purchase
+-- One order has NULL user_id (guest checkout)
+INSERT INTO orders (user_id) VALUES
+(2),
+(NULL);
+
+-- Show data
+SELECT * FROM users;
+SELECT * FROM orders;
+
+-- get users who never ordered anything
+SELECT *
+FROM users u
+WHERE id NOT IN (SELECT user_id FROM orders);
+
+--Correct solution
+SELECT *
+FROM users u
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.user_id = u.id
+);
+
+3. LEFT JOIN
+
+
+-- Reset
+DROP TABLE IF EXISTS subscriptions CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL
+);
+
+-- Subscriptions table
+CREATE TABLE subscriptions (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    status TEXT NOT NULL
+);
+
+-- Insert users
+INSERT INTO users (email) VALUES
+('alice@example.com'),
+('bob@example.com'),
+('charlie@example.com');
+
+-- Insert subscriptions
+-- Alice has active subscription
+-- Bob has canceled subscription
+-- Charlie never subscribed
+INSERT INTO subscriptions (user_id, status) VALUES
+(1, 'active'),
+(2, 'canceled');
+
+-- Show data
+SELECT * FROM users;
+SELECT * FROM subscriptions;
+
+
+-- "Show all users and their active subscription if they have one"
+
+SELECT u.id, u.email, s.status
+FROM users u
+LEFT JOIN subscriptions s
+    ON u.id = s.user_id
+WHERE s.status = 'active';
+
+-- Correct version (move condition into JOIN)
+
+SELECT u.id, u.email, s.status
+FROM users u
+LEFT JOIN subscriptions s
+    ON u.id = s.user_id
+    AND s.status = 'active';
+
+4. NULL
+
+
+-- Reset
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    verified_at TIMESTAMP NULL
+);
+
+-- Insert specific values
+INSERT INTO users (email, verified_at) VALUES
+('alice@example.com', '2026-01-10 09:15:00'),
+('bob@example.com', NULL),
+('charlie@example.com', '2026-02-20 14:30:00');
+
+-- Show all users
+SELECT id, email, verified_at FROM users;
+
+-- "Show users who are NOT verified"
+SELECT id, email
+FROM users
+WHERE verified_at = NULL;
+
+-- Another wrong attempt
+SELECT id, email
+FROM users
+WHERE verified_at <> NULL;
+
+-- Correct query
+SELECT id, email
+FROM users
+WHERE verified_at IS NULL;
+
+5. JOIN
+
+
+
+-- Reset
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL
+);
+
+-- Orders table
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    amount NUMERIC(10,2)
+);
+
+-- Insert users
+INSERT INTO users (email) VALUES
+('alice@example.com'),
+('bob@example.com'),
+('charlie@example.com');
+
+-- Insert orders
+-- Alice made 2 orders
+-- Bob made 1 order
+INSERT INTO orders (user_id, amount) VALUES
+(1, 100.00),
+(1, 50.00),
+(2, 200.00);
+
+-- Show data
+SELECT * FROM users;
+SELECT * FROM orders;
+
+-- "How many users have placed at least one order?"
+
+SELECT COUNT(*)
+FROM users u
+JOIN orders o ON u.id = o.user_id;
+
+-- Correct version
+SELECT COUNT(DISTINCT u.id)
+FROM users u
+JOIN orders o ON u.id = o.user_id;
