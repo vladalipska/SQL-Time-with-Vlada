@@ -1,0 +1,96 @@
+-- Sample data
+
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    status TEXT,
+    total INT
+);
+
+INSERT INTO users (name) VALUES
+('Alice'),
+('Bob'),
+('Charlie'),
+('Diana'),
+('Eve');
+
+INSERT INTO orders (user_id, status, total) VALUES
+(1, 'paid', 120),
+(1, 'paid', 80),
+(2, 'paid', 50),
+(2, 'pending', 200),
+(3, 'paid', 300),
+(4, 'paid', 20),
+(4, 'paid', 40),
+(5, 'pending', 500);
+
+
+-- Subquery -> CTE
+
+SELECT u.name,
+       stats.total_orders
+FROM users u
+JOIN
+  (SELECT user_id,
+          COUNT(*) AS total_orders
+   FROM orders
+   GROUP BY user_id) stats ON u.id = stats.user_id
+WHERE stats.total_orders >= 2;
+
+
+WITH order_stats AS (
+    SELECT user_id, COUNT(*) AS total_orders
+    FROM orders
+    GROUP BY user_id
+)
+SELECT u.name, order_stats.total_orders
+FROM users u
+JOIN order_stats
+ON u.id = order_stats.user_id
+WHERE order_stats.total_orders >= 2;
+
+
+-- Debugging
+
+WITH order_stats AS (
+    SELECT user_id, COUNT(*) AS total_orders
+    FROM orders
+    GROUP BY user_id
+)
+SELECT *
+FROM order_stats;
+
+-- Real-world SQL pattern
+
+WITH paid_orders AS (
+    SELECT *
+    FROM orders
+    WHERE status = 'paid'
+),
+customer_totals AS (
+    SELECT user_id, SUM(total) AS total_spent
+    FROM paid_orders
+    GROUP BY user_id
+)
+SELECT u.name, customer_totals.total_spent
+FROM users u
+JOIN customer_totals
+ON u.id = customer_totals.user_id
+WHERE customer_totals.total_spent > 100;
+
+-- Common mistake
+
+WITH users_cte AS (
+    SELECT *
+    FROM users
+)
+SELECT *
+FROM users_cte;
