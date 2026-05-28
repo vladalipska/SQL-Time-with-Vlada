@@ -1,0 +1,64 @@
+-- =========================================
+-- WHERE vs GROUP BY vs HAVING
+-- Sample Data Setup
+-- =========================================
+
+DROP TABLE IF EXISTS orders;
+
+CREATE TABLE orders (
+    id INT PRIMARY KEY,
+    customer VARCHAR(50),
+    amount INT
+);
+
+INSERT INTO orders (id, customer, amount) VALUES
+(1, 'Alice', 120),
+(2, 'Bob', 80),
+(3, 'Alice', 50),
+(4, 'Charlie', 200),
+(5, 'Bob', 40),
+(6, 'Alice', 70);
+
+-- =========================================
+-- Show sample data
+-- =========================================
+
+SELECT * FROM orders;
+
+-- =========================================
+-- WHERE
+-- Show orders greater than 100
+-- =========================================
+
+SELECT *
+FROM orders
+WHERE amount > 100;
+
+-- =========================================
+-- GROUP BY
+-- Total amount per customer
+-- =========================================
+
+SELECT customer, SUM(amount) AS total_spent
+FROM orders
+GROUP BY customer;
+
+-- =========================================
+-- WRONG EXAMPLE
+-- WHERE cannot use aggregate functions
+-- =========================================
+
+SELECT customer, SUM(amount) AS total_spent
+FROM orders
+WHERE SUM(amount) > 150
+GROUP BY customer;
+
+-- =========================================
+-- HAVING
+-- Filter groups after grouping
+-- =========================================
+
+SELECT customer, SUM(amount) AS total_spent
+FROM orders
+GROUP BY customer
+HAVING SUM(amount) > 150;
