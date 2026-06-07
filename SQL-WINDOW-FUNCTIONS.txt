@@ -1,0 +1,151 @@
+-- =========================================
+-- WINDOW FUNCTIONS
+-- Sample Data Setup
+-- =========================================
+
+DROP TABLE IF EXISTS employees;
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    department TEXT,
+    salary INT
+);
+
+INSERT INTO employees
+(name, department, salary)
+VALUES
+('Alice', 'Engineering', 9000),
+('Bob', 'Engineering', 8000),
+('Charlie', 'Engineering', 7000),
+('Diana', 'Marketing', 6000),
+('Eve', 'Marketing', 5500),
+('Frank', 'Marketing', 5000),
+('Grace', 'Sales', 8500),
+('Henry', 'Sales', 7500),
+('Ivan', 'Sales', 6500);
+
+
+DROP TABLE IF EXISTS sales;
+
+CREATE TABLE sales (
+   id SERIAL PRIMARY KEY,
+   sale_date DATE,
+   amount INT
+);
+
+INSERT INTO sales
+(sale_date, amount)
+VALUES
+('2026-01-01',100),
+('2026-01-02',150),
+('2026-01-03',200),
+('2026-01-04',50);
+
+
+-- =========================================
+-- Queries
+-- =========================================
+
+SELECT
+    department,
+    MAX(salary)
+FROM employees
+GROUP BY department;
+
+
+SELECT
+    name,
+    department,
+    salary,
+    ROW_NUMBER() OVER (
+        PARTITION BY department
+        ORDER BY salary DESC
+    ) AS rank
+FROM employees;
+
+-- What if we only want the highest-paid employee?
+WITH ranked_employees AS (
+    SELECT
+        name,
+        department,
+        salary,
+        ROW_NUMBER() OVER (
+            PARTITION BY department
+            ORDER BY salary DESC
+        ) AS row_num
+    FROM employees
+)
+SELECT *
+FROM ranked_employees
+WHERE row_num = 1;
+
+-- RANK vs DENSE_RANK
+SELECT * FROM employees;
+
+INSERT INTO employees
+(name, department, salary)
+VALUES
+('John', 'Engineering', 8000);
+
+-- gaps
+SELECT
+    name,
+    salary,
+    RANK() OVER (
+        ORDER BY salary DESC
+    ) AS rank
+FROM employees;
+
+-- no gaps
+SELECT
+    name,
+    salary,
+    DENSE_RANK() OVER (
+        ORDER BY salary DESC
+    ) AS rank
+FROM employees;
+
+-- RUNNING TOTALS
+
+SELECT * FROM sales;
+
+SELECT
+   sale_date,
+   amount,
+   SUM(amount) OVER (
+       ORDER BY sale_date
+   ) AS running_total
+FROM sales;
+
+
+-- LAG
+
+SELECT
+   sale_date,
+   amount,
+   LAG(amount) OVER (
+       ORDER BY sale_date
+   ) AS previous_amount
+FROM sales;
+
+-- LEAD
+
+SELECT
+   sale_date,
+   amount,
+   LEAD(amount) OVER (
+       ORDER BY sale_date
+   ) AS next_day_amount
+FROM sales;
+
+-- Difference
+
+SELECT
+   sale_date,
+   amount,
+   amount -
+   LAG(amount) OVER (
+       ORDER BY sale_date
+   ) AS difference
+FROM sales;
