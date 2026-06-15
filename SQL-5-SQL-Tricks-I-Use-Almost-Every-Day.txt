@@ -1,0 +1,92 @@
+-- =========================================
+-- SQL Tricks You'll Use Every Week
+-- Sample Data
+-- =========================================
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    country VARCHAR(50),
+    status VARCHAR(20)
+);
+
+CREATE TABLE orders (
+    id INT PRIMARY KEY,
+    user_id INT,
+    amount NUMERIC(10,2),
+    created_at DATE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+INSERT INTO users (id, name, country, status) VALUES
+(1, 'Alice', 'Poland', 'active'),
+(2, 'Bob', NULL, 'inactive'),
+(3, 'Charlie', 'Germany', 'active'),
+(4, 'David', NULL, 'active'),
+(5, 'Emma', 'France', 'inactive');
+
+INSERT INTO orders (id, user_id, amount, created_at) VALUES
+(1, 1, 120, '2026-01-10'),
+(2, 1, 80,  '2026-01-15'),
+(3, 1, 50,  '2026-01-20'),
+(4, 2, 40,  '2026-02-01'),
+(5, 3, 200, '2026-02-05'),
+(6, 3, 150, '2026-02-12'),
+(7, 5, 70,  '2026-03-01');
+
+-- Show data
+
+SELECT * FROM users;
+
+SELECT * FROM orders;
+
+-- Queries
+
+-- COALESCE
+
+SELECT
+    name,
+    COALESCE(country, 'Unknown') AS country
+FROM users;
+
+-- CASE
+
+SELECT
+    id,
+    amount,
+    CASE
+        WHEN amount >= 100 THEN 'Large'
+        ELSE 'Small'
+    END AS order_type
+FROM orders;
+
+-- FILTER
+
+SELECT
+    COUNT(*) FILTER (WHERE status = 'active') AS active_users,
+    COUNT(*) FILTER (WHERE status = 'inactive') AS inactive_users
+FROM users;
+
+-- HAVING
+
+SELECT
+    user_id,
+    COUNT(*) AS orders_count
+FROM orders
+GROUP BY user_id
+HAVING COUNT(*) >= 2;
+
+-- EXISTS
+
+SELECT
+    name
+FROM users u
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.user_id = u.id
+);
+
