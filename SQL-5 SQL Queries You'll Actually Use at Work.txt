@@ -1,0 +1,106 @@
+-- =========================================
+-- 5 SQL Queries You'll Actually Use at Work
+-- Sample Data
+-- =========================================
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS customers;
+
+CREATE TABLE customers (
+    id INT PRIMARY KEY,
+    customer_name VARCHAR(50)
+);
+
+CREATE TABLE orders (
+    id INT PRIMARY KEY,
+    customer_id INT,
+    amount DECIMAL(10,2),
+    order_date DATE
+);
+
+INSERT INTO customers VALUES
+(1, 'Alice'),
+(2, 'Bob'),
+(3, 'Charlie'),
+(4, 'David'),
+(5, 'Emma');
+
+INSERT INTO orders VALUES
+(1, 1, 120, '2026-01-01'),
+(2, 1, 80,  '2026-01-15'),
+(3, 2, 50,  '2026-01-20'),
+(4, 2, 140, '2026-02-01'),
+(5, 3, 220, '2026-02-10'),
+(6, 3, 60,  '2026-02-18'),
+(7, 5, 100, '2026-03-01');
+
+SELECT * FROM customers;
+
+SELECT * FROM orders;
+
+-- =========================================
+-- Existing orders
+-- =========================================
+
+SELECT customer_name, amount, order_date
+FROM customers
+LEFT JOIN orders ON customers.id = orders.customer_id;
+
+-- =========================================
+-- Find customers who never placed an order.
+-- =========================================
+
+SELECT customer_name
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.id
+);
+
+-- =========================================
+-- Show the latest order for every customer.
+-- =========================================
+
+SELECT DISTINCT ON (customer_id)
+    customer_id,
+    amount,
+    order_date
+FROM orders
+ORDER BY customer_id, order_date DESC;
+
+-- =========================================
+-- Who spent the most money?
+-- =========================================
+
+SELECT
+    customer_id,
+    SUM(amount) AS total_spent
+FROM orders
+GROUP BY customer_id
+ORDER BY total_spent DESC;
+
+-- =========================================
+-- Show only customers who placed more than one order.
+-- =========================================
+
+SELECT
+    customer_id,
+    COUNT(id) AS orders_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(id) > 1;
+
+-- =========================================
+-- Show the top three customers by total spending.
+-- =========================================
+
+SELECT
+    c.customer_name,
+    SUM(o.amount) AS total_spent
+FROM customers c
+JOIN orders o
+ON c.id = o.customer_id
+GROUP BY c.customer_name
+ORDER BY total_spent DESC
+LIMIT 3;
