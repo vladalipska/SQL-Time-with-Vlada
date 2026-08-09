@@ -1,0 +1,90 @@
+
+DROP TABLE IF EXISTS employees;
+
+CREATE TABLE employees
+(
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    department VARCHAR(30),
+    salary INT
+);
+
+INSERT INTO employees VALUES
+(1,'Alice','IT',8500),
+(2,'Bob','IT',6200),
+(3,'Charlie','HR',4800),
+(4,'David','Sales',7100),
+(5,'Emma','Sales',5600),
+(6,'Frank','Marketing',6500),
+(7,'Grace','Marketing',7200);
+
+SELECT *
+FROM employees;
+
+-- Queries
+
+
+SELECT * FROM employees;
+
+-- Show me employees who earn more than the company average.
+SELECT
+    employee_name,
+    salary
+FROM employees
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+);
+
+
+
+-- Show me employees who earn more than the average salary in their own department.
+
+SELECT *,
+(
+    SELECT AVG(salary)
+    FROM employees d
+    WHERE d.department = e.department
+) AS department_average
+FROM employees e
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+    WHERE department = e.department
+);
+
+
+-- Show departments whose average salary is above the company average.
+
+SELECT
+    department,
+    AVG(salary) AS average_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) >
+(
+    SELECT AVG(salary)
+    FROM employees
+);
+
+
+
+-- Show the highest-paid employee from every department.
+
+SELECT *,
+(
+    SELECT MAX(salary)
+    FROM employees d
+    WHERE d.department = e.department
+) AS highest_salary
+FROM employees e
+WHERE salary =
+(
+    SELECT MAX(salary)
+    FROM employees
+    WHERE department = e.department
+);
+
+
