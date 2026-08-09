@@ -1,0 +1,79 @@
+-- Sample data
+
+DROP TABLE IF EXISTS online_orders;
+DROP TABLE IF EXISTS store_orders;
+
+CREATE TABLE online_orders (
+    order_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    amount DECIMAL(10,2)
+);
+
+CREATE TABLE store_orders (
+    order_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    amount DECIMAL(10,2)
+);
+
+INSERT INTO online_orders VALUES
+(1,'Alice',120),
+(2,'Bob',80),
+(3,'Charlie',150),
+(4,'Emma',90);
+
+INSERT INTO store_orders VALUES
+(3,'Charlie',150),
+(5,'David',200),
+(6,'Frank',110),
+(7,'Grace',95);
+
+
+-- Queries
+
+
+SELECT * FROM online_orders;
+
+SELECT * FROM store_orders;
+
+-- The Sales team needs one report containing both online and in-store orders.
+
+SELECT *
+FROM online_orders
+
+UNION
+
+SELECT *
+FROM store_orders;
+
+-- We need every order in the report.
+
+SELECT *
+FROM online_orders
+
+UNION ALL
+
+SELECT *
+FROM store_orders;
+
+-- Performance
+
+EXPLAIN ANALYZE
+
+SELECT *
+FROM online_orders
+
+UNION
+
+SELECT *
+FROM store_orders;
+
+
+EXPLAIN ANALYZE
+
+SELECT *
+FROM online_orders
+
+UNION ALL
+
+SELECT *
+FROM store_orders;
