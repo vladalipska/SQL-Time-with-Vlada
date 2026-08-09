@@ -1,0 +1,334 @@
+-- =========================================
+-- CAR RENTAL HUB
+-- Sample Database for SQL Beginners
+-- PostgreSQL
+-- =========================================
+
+
+-- =========================================
+-- 1. CLEAN UP EXISTING TABLES
+-- =========================================
+
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS cars;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS locations;
+
+
+-- =========================================
+-- 2. CREATE LOCATIONS TABLE
+-- =========================================
+
+CREATE TABLE locations (
+    location_id INT PRIMARY KEY,
+    address VARCHAR(100)
+);
+
+
+-- =========================================
+-- 3. CREATE USERS TABLE
+-- =========================================
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+
+-- =========================================
+-- 4. CREATE CARS TABLE
+-- =========================================
+
+CREATE TABLE cars (
+    car_id INT PRIMARY KEY,
+    make VARCHAR(50),
+    model VARCHAR(50),
+    location_id INT REFERENCES locations(location_id)
+);
+
+
+-- =========================================
+-- 5. CREATE BOOKINGS TABLE
+-- =========================================
+
+CREATE TABLE bookings (
+    booking_id INT PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    car_id INT REFERENCES cars(car_id),
+    location_id INT REFERENCES locations(location_id),
+    booking_start DATE,
+    booking_end DATE
+);
+
+
+-- =========================================
+-- 6. INSERT LOCATIONS
+-- =========================================
+
+INSERT INTO locations (location_id, address)
+VALUES
+    (1, '12 Main Street'),
+    (2, '48 Airport Road'),
+    (3, '105 Downtown Avenue'),
+    (4, '77 Riverside Drive'),
+    (5, '23 Central Station'),
+    (6, '91 Market Street');
+
+
+-- =========================================
+-- 7. INSERT USERS
+-- =========================================
+
+INSERT INTO users (user_id, first_name, last_name, email)
+VALUES
+    (1, 'Victoria', 'Anderson', 'victoria.anderson@example.com'),
+    (2, 'James', 'Brown', 'james.brown@example.com'),
+    (3, 'Olivia', 'Clark', 'olivia.clark@example.com'),
+    (4, 'William', 'Davis', 'william.davis@example.com'),
+    (5, 'Emma', 'Evans', 'emma.evans@example.com'),
+    (6, 'Daniel', 'Foster', 'daniel.foster@example.com'),
+    (7, 'Sophia', 'Garcia', 'sophia.garcia@example.com'),
+    (8, 'Michael', 'Harris', 'michael.harris@example.com'),
+    (9, 'Amelia', 'Jackson', 'amelia.jackson@example.com'),
+    (10, 'Alexander', 'King', 'alexander.king@example.com'),
+    (11, 'Isabella', 'Lewis', 'isabella.lewis@example.com'),
+    (12, 'Benjamin', 'Martin', 'benjamin.martin@example.com'),
+    (13, 'Mia', 'Nelson', 'mia.nelson@example.com'),
+    (14, 'Henry', 'Parker', 'henry.parker@example.com'),
+    (15, 'Charlotte', 'Roberts', 'charlotte.roberts@example.com'),
+    (16, 'Lucas', 'Smith', 'lucas.smith@example.com'),
+    (17, 'Harper', 'Taylor', 'harper.taylor@example.com'),
+    (18, 'Ethan', 'Thomas', 'ethan.thomas@example.com'),
+    (19, 'Evelyn', 'Walker', 'evelyn.walker@example.com'),
+    (20, 'Noah', 'White', 'noah.white@example.com'),
+    (21, 'Ava', 'Wilson', 'ava.wilson@example.com'),
+    (22, 'Jack', 'Adams', 'jack.adams@example.com'),
+    (23, 'Luna', 'Baker', 'luna.baker@example.com'),
+    (24, 'Samuel', 'Bennett', 'samuel.bennett@example.com'),
+    (25, 'Ella', 'Brooks', 'ella.brooks@example.com'),
+    (26, 'Matthew', 'Campbell', 'matthew.campbell@example.com'),
+    (27, 'Grace', 'Carter', 'grace.carter@example.com'),
+    (28, 'Joseph', 'Collins', 'joseph.collins@example.com'),
+    (29, 'Chloe', 'Cooper', 'chloe.cooper@example.com'),
+    (30, 'David', 'Edwards', 'david.edwards@example.com'),
+    (31, 'Lily', 'Fisher', 'lily.fisher@example.com'),
+    (32, 'Logan', 'Graham', 'logan.graham@example.com'),
+    (33, 'Sofia', 'Green', 'sofia.green@example.com'),
+    (34, 'Sebastian', 'Griffin', 'sebastian.griffin@example.com'),
+    (35, 'Aria', 'Hall', 'aria.hall@example.com'),
+    (36, 'Owen', 'Hamilton', 'owen.hamilton@example.com'),
+    (37, 'Scarlett', 'Henderson', 'scarlett.henderson@example.com'),
+    (38, 'Aiden', 'Hill', 'aiden.hill@example.com'),
+    (39, 'Zoe', 'Holmes', 'zoe.holmes@example.com'),
+    (40, 'Carter', 'Howard', 'carter.howard@example.com'),
+    (41, 'Nora', 'Hughes', 'nora.hughes@example.com'),
+    (42, 'Wyatt', 'Jenkins', 'wyatt.jenkins@example.com'),
+    (43, 'Riley', 'Kelly', 'riley.kelly@example.com'),
+    (44, 'John', 'Kim', 'john.kim@example.com'),
+    (45, 'Layla', 'Long', 'layla.long@example.com'),
+    (46, 'Dylan', 'Morgan', 'dylan.morgan@example.com'),
+    (47, 'Ellie', 'Murphy', 'ellie.murphy@example.com'),
+    (48, 'Luke', 'Peterson', 'luke.peterson@example.com'),
+    (49, 'Hannah', 'Phillips', 'hannah.phillips@example.com'),
+    (50, 'Gabriel', 'Powell', 'gabriel.powell@example.com'),
+    (51, 'Natalie', 'Reed', 'natalie.reed@example.com'),
+    (52, 'Isaac', 'Richardson', 'isaac.richardson@example.com'),
+    (53, 'Leah', 'Rivera', 'leah.rivera@example.com'),
+    (54, 'Julian', 'Sanders', 'julian.sanders@example.com'),
+    (55, 'Audrey', 'Scott', 'audrey.scott@example.com'),
+    (56, 'Leo', 'Stewart', 'leo.stewart@example.com'),
+    (57, 'Stella', 'Turner', 'stella.turner@example.com'),
+    (58, 'Anthony', 'Ward', 'anthony.ward@example.com'),
+    (59, 'Lucy', 'Watson', 'lucy.watson@example.com'),
+    (60, 'Christopher', 'Wood', 'christopher.wood@example.com');
+
+
+-- =========================================
+-- 8. INSERT CARS
+-- =========================================
+
+INSERT INTO cars (car_id, make, model, location_id)
+VALUES
+    (1, 'Toyota', 'Corolla', 1),
+    (2, 'Toyota', 'Camry', 2),
+    (3, 'Toyota', 'RAV4', 3),
+    (4, 'Toyota', 'Yaris', 4),
+
+    (5, 'Honda', 'Civic', 1),
+    (6, 'Honda', 'Accord', 2),
+    (7, 'Honda', 'CR-V', 3),
+    (8, 'Honda', 'HR-V', 5),
+
+    (9, 'BMW', '3 Series', 1),
+    (10, 'BMW', '5 Series', 2),
+    (11, 'BMW', 'X3', 4),
+
+    (12, 'Mercedes-Benz', 'C-Class', 3),
+    (13, 'Mercedes-Benz', 'E-Class', 5),
+    (14, 'Mercedes-Benz', 'GLC', 6),
+
+    (15, 'Ford', 'Focus', 1),
+    (16, 'Ford', 'Mustang', 2),
+    (17, 'Ford', 'Explorer', 6),
+
+    (18, 'Tesla', 'Model 3', 3),
+    (19, 'Tesla', 'Model Y', 4),
+    (20, 'Tesla', 'Model S', 6);
+
+
+-- =========================================
+-- 9. INSERT BOOKINGS
+-- =========================================
+
+INSERT INTO bookings
+    (booking_id, user_id, car_id, location_id, booking_start, booking_end)
+VALUES
+
+    (1, 1, 1, 1, '2025-01-05', '2025-01-08'),
+    (2, 1, 5, 1, '2025-02-10', '2025-02-13'),
+    (3, 1, 9, 1, '2025-03-15', '2025-03-18'),
+    (4, 1, 15, 1, '2025-04-20', '2025-04-23'),
+    (5, 1, 18, 1, '2025-05-12', '2025-05-15'),
+
+    (6, 2, 2, 2, '2025-01-05', '2025-01-07'),
+    (7, 2, 6, 2, '2025-02-10', '2025-02-12'),
+    (8, 2, 10, 2, '2025-03-15', '2025-03-17'),
+    (9, 2, 16, 2, '2025-04-20', '2025-04-22'),
+
+    (10, 3, 3, 3, '2025-01-05', '2025-01-08'),
+    (11, 3, 7, 3, '2025-02-10', '2025-02-13'),
+    (12, 3, 11, 3, '2025-03-15', '2025-03-18'),
+
+    (13, 4, 4, 4, '2025-01-08', '2025-01-10'),
+    (14, 4, 8, 4, '2025-02-12', '2025-02-15'),
+
+    (15, 5, 12, 5, '2025-01-10', '2025-01-13'),
+    (16, 5, 13, 5, '2025-02-15', '2025-02-18'),
+    (17, 5, 14, 6, '2025-03-20', '2025-03-23'),
+    (18, 5, 17, 6, '2025-04-25', '2025-04-28'),
+
+    (19, 6, 19, 4, '2025-01-12', '2025-01-15'),
+    (20, 6, 20, 6, '2025-02-17', '2025-02-20'),
+
+    (21, 7, 1, 1, '2025-01-15', '2025-01-18'),
+    (22, 7, 5, 1, '2025-02-20', '2025-02-23'),
+    (23, 7, 9, 1, '2025-03-25', '2025-03-28'),
+    (24, 7, 15, 1, '2025-04-30', '2025-05-03'),
+
+    (25, 8, 2, 2, '2025-01-18', '2025-01-20'),
+    (26, 8, 6, 2, '2025-02-23', '2025-02-25'),
+    (27, 8, 10, 2, '2025-03-28', '2025-03-30'),
+
+    (28, 9, 3, 3, '2025-01-20', '2025-01-23'),
+    (29, 9, 7, 3, '2025-02-25', '2025-02-28'),
+    (30, 9, 11, 3, '2025-03-30', '2025-04-02'),
+    (31, 9, 18, 3, '2025-04-30', '2025-05-03'),
+    (32, 9, 19, 4, '2025-05-05', '2025-05-08'),
+
+    (33, 10, 4, 4, '2025-01-22', '2025-01-25'),
+    (34, 10, 8, 4, '2025-02-27', '2025-03-02'),
+
+    (35, 11, 12, 5, '2025-01-25', '2025-01-28'),
+    (36, 11, 13, 5, '2025-02-28', '2025-03-03'),
+    (37, 11, 14, 6, '2025-03-30', '2025-04-02'),
+
+    (38, 12, 16, 2, '2025-01-28', '2025-01-31'),
+    (39, 12, 17, 6, '2025-03-03', '2025-03-06'),
+    (40, 12, 20, 6, '2025-04-02', '2025-04-05'),
+    (41, 12, 19, 4, '2025-05-05', '2025-05-08'),
+
+    (42, 13, 1, 1, '2025-02-01', '2025-02-04'),
+    (43, 13, 5, 1, '2025-03-05', '2025-03-08'),
+
+    (44, 14, 2, 2, '2025-02-05', '2025-02-08'),
+    (45, 14, 6, 2, '2025-03-10', '2025-03-13'),
+    (46, 14, 10, 2, '2025-04-15', '2025-04-18'),
+    (47, 14, 16, 2, '2025-05-20', '2025-05-23'),
+
+    (48, 15, 3, 3, '2025-02-10', '2025-02-13'),
+    (49, 15, 7, 3, '2025-03-15', '2025-03-18'),
+    (50, 15, 11, 3, '2025-04-20', '2025-04-23'),
+
+    (51, 16, 4, 4, '2025-02-12', '2025-02-15'),
+    (52, 16, 8, 4, '2025-03-17', '2025-03-20'),
+
+    (53, 17, 12, 5, '2025-02-15', '2025-02-18'),
+    (54, 17, 13, 5, '2025-03-20', '2025-03-23'),
+    (55, 17, 14, 6, '2025-04-25', '2025-04-28'),
+
+    (56, 18, 18, 3, '2025-02-20', '2025-02-23'),
+    (57, 18, 19, 4, '2025-03-25', '2025-03-28'),
+    (58, 18, 20, 6, '2025-04-30', '2025-05-03'),
+    (59, 18, 1, 1, '2025-05-05', '2025-05-08'),
+
+    (60, 19, 5, 1, '2025-02-25', '2025-02-28'),
+    (61, 19, 9, 1, '2025-03-30', '2025-04-02'),
+
+    (62, 20, 6, 2, '2025-03-01', '2025-03-04'),
+    (63, 20, 10, 2, '2025-04-05', '2025-04-08'),
+    (64, 20, 16, 2, '2025-05-10', '2025-05-13'),
+
+    (65, 21, 7, 3, '2025-03-05', '2025-03-08'),
+    (66, 21, 11, 3, '2025-04-10', '2025-04-13'),
+    (67, 21, 18, 3, '2025-05-15', '2025-05-18'),
+
+    (68, 22, 8, 4, '2025-03-10', '2025-03-13'),
+    (69, 22, 12, 5, '2025-04-15', '2025-04-18'),
+
+    (70, 23, 13, 5, '2025-03-15', '2025-03-18'),
+    (71, 23, 14, 6, '2025-04-20', '2025-04-23'),
+    (72, 23, 17, 6, '2025-05-25', '2025-05-28'),
+
+    (73, 24, 19, 4, '2025-03-20', '2025-03-23'),
+    (74, 24, 20, 6, '2025-04-25', '2025-04-28'),
+
+    (75, 25, 1, 1, '2025-03-25', '2025-03-28'),
+    (76, 25, 2, 2, '2025-04-30', '2025-05-03'),
+    (77, 25, 3, 3, '2025-05-05', '2025-05-08'),
+
+    (78, 26, 4, 4, '2025-04-01', '2025-04-04'),
+    (79, 26, 5, 1, '2025-05-10', '2025-05-13'),
+
+    (80, 27, 6, 2, '2025-04-05', '2025-04-08'),
+    (81, 27, 7, 3, '2025-05-15', '2025-05-18'),
+    (82, 27, 8, 4, '2025-06-01', '2025-06-04'),
+
+    (83, 28, 9, 1, '2025-04-10', '2025-04-13'),
+    (84, 28, 10, 2, '2025-05-20', '2025-05-23'),
+
+    (85, 29, 11, 3, '2025-04-15', '2025-04-18'),
+    (86, 29, 12, 5, '2025-05-25', '2025-05-28'),
+    (87, 29, 13, 5, '2025-06-05', '2025-06-08'),
+
+    (88, 30, 14, 6, '2025-04-20', '2025-04-23'),
+
+    (89, 31, 15, 1, '2025-05-05', '2025-05-08'),
+    (90, 32, 16, 2, '2025-05-05', '2025-05-08'),
+    (91, 33, 17, 6, '2025-05-05', '2025-05-08'),
+
+    (92, 34, 18, 3, '2025-05-10', '2025-05-13'),
+    (93, 35, 19, 4, '2025-05-10', '2025-05-13'),
+    (94, 36, 20, 6, '2025-05-10', '2025-05-13'),
+
+    (95, 37, 1, 1, '2025-05-15', '2025-05-18'),
+    (96, 38, 2, 2, '2025-05-15', '2025-05-18'),
+    (97, 39, 3, 3, '2025-05-15', '2025-05-18'),
+
+    (98, 40, 4, 4, '2025-05-20', '2025-05-23'),
+    (99, 41, 5, 1, '2025-05-20', '2025-05-23'),
+    (100, 42, 6, 2, '2025-05-20', '2025-05-23');
+
+
+-- =========================================
+-- DATABASE READY
+-- =========================================
+
+-- Quick checks:
+
+ SELECT COUNT(*) FROM users;       -- 60
+ SELECT COUNT(*) FROM cars;        -- 20
+ SELECT COUNT(*) FROM locations;   -- 6
+ SELECT COUNT(*) FROM bookings;    -- 100
+
